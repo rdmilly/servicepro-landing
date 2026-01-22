@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  servicepro-landing:
+    build: .
+    container_name: servicepro-landing
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_SITE_URL=https://demo.revenuefirst.ai
+      - NEXT_PUBLIC_TIDYCAL_URL=https://tidycal.com/revenuefirst/discovery
+    networks:
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.servicepro.rule=Host(`demo.revenuefirst.ai`)"
+      - "traefik.http.routers.servicepro.entrypoints=https"
+      - "traefik.http.routers.servicepro.tls=true"
+      - "traefik.http.routers.servicepro.tls.certresolver=letsencrypt"
+      - "traefik.http.services.servicepro.loadbalancer.server.port=3000"
+      - "traefik.http.routers.servicepro-http.rule=Host(`demo.revenuefirst.ai`)"
+      - "traefik.http.routers.servicepro-http.entrypoints=http"
+      - "traefik.http.routers.servicepro-http.middlewares=redirect-to-https"
+
+networks:
+  coolify:
+    external: true
